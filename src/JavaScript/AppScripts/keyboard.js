@@ -600,7 +600,73 @@ function doc_keyUp(e) {
   }
 }
 
+// function shiftOperate (e) {
+//   if (e.key == 'Shift' && !e.repeat) {
+
+//   }
+// }
+
+
+
 const keys = Array.from(document.querySelectorAll(".common_keyboard"));
 keys.forEach(key => key.addEventListener("transitionend", removeTransition));
 window.addEventListener("keydown", pushKeypad);
 window.addEventListener("keydown", doc_keyUp);
+window.addEventListener('keydown', function (evt) {
+  if (evt.key == 'Shift' && !evt.repeat) { // ctrl
+    if (keysCase == "uppercase") {
+      buttonsArray.forEach(button => {
+        allKeys.forEach(domButton => {
+          if (
+            !button.type &&
+            domButton.innerText === button.value[keysLang].uppercase
+          ) {
+            domButton.innerText = button.value[keysLang].lowercase;
+            keysCase = "lowercase";
+          }
+        });
+      });
+    } else {
+      buttonsArray.forEach(button => {
+        allKeys.forEach(domButton => {
+          if (
+            !button.type &&
+            domButton.innerText === button.value[keysLang].lowercase
+          ) {
+            domButton.innerText = button.value[keysLang].uppercase;
+            keysCase = "uppercase";
+          }
+        });
+      });
+    }
+  }
+})
+window.addEventListener('keyup', function(evt) {
+  if (evt.key == 'Shift') { // ctrl
+    if (keysCase == "uppercase") {
+      buttonsArray.forEach(button => {
+        allKeys.forEach(domButton => {
+          if (
+            !button.type &&
+            domButton.innerText === button.value[keysLang].uppercase
+          ) {
+            domButton.innerText = button.value[keysLang].lowercase;
+            keysCase = "lowercase";
+          }
+        });
+      });
+    } else {
+      buttonsArray.forEach(button => {
+        allKeys.forEach(domButton => {
+          if (
+            !button.type &&
+            domButton.innerText === button.value[keysLang].lowercase
+          ) {
+            domButton.innerText = button.value[keysLang].uppercase;
+            keysCase = "uppercase";
+          }
+        });
+      });
+    }
+  }
+});
