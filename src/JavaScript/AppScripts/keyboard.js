@@ -523,23 +523,40 @@ buttonsArray.forEach(button => {
   keyPad.insertAdjacentElement("beforeend", buttonContainer);
 });
 
-let allKeys = Array.from(document.querySelectorAll(".common_keyboard"));
+const allKeys = Array.from(document.querySelectorAll(".common_keyboard"));
+
+allKeys.forEach(key => key.addEventListener("transitionend", removeTransition));
 
 keyPad.addEventListener("click", clickKeyboard);
+keyPad.addEventListener("mousedown", clickShiftDown);
+keyPad.addEventListener("mouseup", clickShiftUp);
+window.addEventListener("keydown", pushKeypad);
+window.addEventListener("keydown", changeLang);
+window.addEventListener("keydown", shiftDown);
+window.addEventListener("keyup", shiftUp);
 
 function clickKeyboard(e) {
+  if (!Array.from(e.target.classList).includes('common_keyboard')) {return}
   e.target.classList.add("active");
   let keyValue = e.target.innerText;
   clicksPushesHandler(keyValue);
 }
-
+function clickShiftDown(e) {
+  if (e.target.innerText == "Shift") {
+    changeCase();
+  }
+}
+function clickShiftUp(e) {
+  if (e.target.innerText == "Shift") {
+    changeCase();
+  }
+}
 function pushKeypad(e) {
   const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
   let keyValue = key.innerText;
   clicksPushesHandler(keyValue);
   key.classList.add("active");
 }
-//here attempt to write universal function to make input screen filled with pushes and clicks
 function clicksPushesHandler(value) {
   switch (value) {
     case "Space":
@@ -557,37 +574,17 @@ function clicksPushesHandler(value) {
       input.innerHTML += "\n";
       break;
     case "Caps Lock":
-      if (keysCase == "uppercase") {
-        buttonsArray.forEach(button => {
-          allKeys.forEach(domButton => {
-            if (
-              !button.type &&
-              domButton.innerText === button.value[keysLang].uppercase
-            ) {
-              domButton.innerText = button.value[keysLang].lowercase;
-              keysCase = "lowercase";
-            }
-          });
-        });
-      } else {
-        buttonsArray.forEach(button => {
-          allKeys.forEach(domButton => {
-            if (
-              !button.type &&
-              domButton.innerText === button.value[keysLang].lowercase
-            ) {
-              domButton.innerText = button.value[keysLang].uppercase;
-              keysCase = "uppercase";
-            }
-          });
-        });
-      }
-      break;
-    case "Alt":
+      changeCase();
       break;
     case "Shift":
-      break;
+    case "Alt":
     case "Ctrl":
+    case 'up':
+    case 'down':
+    case 'left':
+    case 'right':
+    case 'Win':
+    case 'Del':
       break;
     default:
       input.innerHTML += value;
@@ -597,11 +594,9 @@ function removeTransition(e) {
   if (e.propertyName !== "transform") return;
   e.target.classList.remove("active");
 }
-//HERE FOR LANG CHANGE
 function changeLang(e) {
   if (e.ctrlKey && e.altKey) {
-    allKeys = Array.from(document.querySelectorAll(".common_keyboard"));
-
+    
     allKeys.forEach(domButton => {
       for (let i = 0; i < buttonsArray.length; i++) {
         if (
@@ -626,69 +621,43 @@ function changeLang(e) {
     }
   }
 }
-
-const keys = Array.from(document.querySelectorAll(".common_keyboard"));
-keys.forEach(key => key.addEventListener("transitionend", removeTransition));
-
-window.addEventListener("keydown", pushKeypad);
-window.addEventListener("keydown", changeLang);
-window.addEventListener("keydown", function(evt) {
-  if (evt.key == "Shift" && !evt.repeat) {
-    // ctrl
-    if (keysCase == "uppercase") {
-      buttonsArray.forEach(button => {
-        allKeys.forEach(domButton => {
-          if (
-            !button.type &&
-            domButton.innerText === button.value[keysLang].uppercase
-          ) {
-            domButton.innerText = button.value[keysLang].lowercase;
-            keysCase = "lowercase";
-          }
-        });
+function changeCase () {
+  if (keysCase == "uppercase") {
+    buttonsArray.forEach(button => {
+      allKeys.forEach(domButton => {
+        if (
+          !button.type &&
+          domButton.innerText === button.value[keysLang].uppercase
+        ) {
+          domButton.innerText = button.value[keysLang].lowercase;
+          keysCase = "lowercase";
+        }
       });
-    } else {
-      buttonsArray.forEach(button => {
-        allKeys.forEach(domButton => {
-          if (
-            !button.type &&
-            domButton.innerText === button.value[keysLang].lowercase
-          ) {
-            domButton.innerText = button.value[keysLang].uppercase;
-            keysCase = "uppercase";
-          }
-        });
+    });
+  } else {
+    buttonsArray.forEach(button => {
+      allKeys.forEach(domButton => {
+        if (
+          !button.type &&
+          domButton.innerText === button.value[keysLang].lowercase
+        ) {
+          domButton.innerText = button.value[keysLang].uppercase;
+          keysCase = "uppercase";
+        }
       });
-    }
+    });
   }
-});
-window.addEventListener("keyup", function(evt) {
-  if (evt.key == "Shift") {
-    // ctrl
-    if (keysCase == "uppercase") {
-      buttonsArray.forEach(button => {
-        allKeys.forEach(domButton => {
-          if (
-            !button.type &&
-            domButton.innerText === button.value[keysLang].uppercase
-          ) {
-            domButton.innerText = button.value[keysLang].lowercase;
-            keysCase = "lowercase";
-          }
-        });
-      });
-    } else {
-      buttonsArray.forEach(button => {
-        allKeys.forEach(domButton => {
-          if (
-            !button.type &&
-            domButton.innerText === button.value[keysLang].lowercase
-          ) {
-            domButton.innerText = button.value[keysLang].uppercase;
-            keysCase = "uppercase";
-          }
-        });
-      });
-    }
+}
+function shiftDown (e) {
+  if (e.key == "Shift" && !e.repeat) {
+    changeCase();
   }
-});
+}
+function shiftUp (e) {
+  if (e.key == "Shift") {
+    // ctrl
+    changeCase()
+  }
+}
+
+
