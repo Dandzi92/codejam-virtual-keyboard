@@ -490,7 +490,20 @@ let keyPad = document.createElement("div");
 keyPad.className = "keypad";
 wrapper.insertAdjacentElement("beforeend", keyPad);
 document.body.append(wrapper);
+
 let buttonContainer;
+let localStorageLang;
+let keysLang;
+let keysCase = "lowercase";
+localStorageLang = localStorage.getItem('myLang');
+
+if (!localStorageLang) {
+  keysLang = 'rus'
+}
+else {
+  keysLang = localStorageLang;
+}
+
 
 buttonsArray.forEach(button => {
   buttonContainer = document.createElement("div");
@@ -501,15 +514,18 @@ buttonsArray.forEach(button => {
       buttonContainer.classList.add(button.css[key]);
     }
   } else {
-    buttonContainer.innerText = button.value.rus.lowercase;
+    if (!localStorageLang) {
+      buttonContainer.innerText = button.value[keysLang].lowercase;
+      localStorage.setItem('myLang', keysLang);
+    }
+    else {buttonContainer.innerText = button.value[localStorageLang].lowercase;}
     buttonContainer.className = button.css;
   }
   keyPad.insertAdjacentElement("beforeend", buttonContainer);
 });
 
-let keysLang = "rus";
-let keysCase = "lowercase";
-let allKeys;
+
+let allKeys = Array.from(document.querySelectorAll(".common_keyboard"));
 
 keyPad.addEventListener("click", function(e) {
   e.target.classList.add("active");
@@ -594,19 +610,13 @@ function doc_keyUp(e) {
     });
     if (keysLang === "eng") {
       keysLang = "rus";
+      localStorage.setItem('myLang', keysLang);
     } else {
       keysLang = "eng";
+      localStorage.setItem('myLang', keysLang);
     }
   }
 }
-
-// function shiftOperate (e) {
-//   if (e.key == 'Shift' && !e.repeat) {
-
-//   }
-// }
-
-
 
 const keys = Array.from(document.querySelectorAll(".common_keyboard"));
 keys.forEach(key => key.addEventListener("transitionend", removeTransition));
