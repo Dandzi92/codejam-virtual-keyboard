@@ -668,7 +668,6 @@ function shiftDown (e) {
 }
 function shiftUp (e) {
   if (e.key == "Shift") {
-    // ctrl
     changeCase()
   }
 }
