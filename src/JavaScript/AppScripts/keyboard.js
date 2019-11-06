@@ -495,15 +495,13 @@ let buttonContainer;
 let localStorageLang;
 let keysLang;
 let keysCase = "lowercase";
-localStorageLang = localStorage.getItem('myLang');
+localStorageLang = localStorage.getItem("myLang");
 
 if (!localStorageLang) {
-  keysLang = 'rus'
-}
-else {
+  keysLang = "rus";
+} else {
   keysLang = localStorageLang;
 }
-
 
 buttonsArray.forEach(button => {
   buttonContainer = document.createElement("div");
@@ -516,21 +514,34 @@ buttonsArray.forEach(button => {
   } else {
     if (!localStorageLang) {
       buttonContainer.innerText = button.value[keysLang].lowercase;
-      localStorage.setItem('myLang', keysLang);
+      localStorage.setItem("myLang", keysLang);
+    } else {
+      buttonContainer.innerText = button.value[localStorageLang].lowercase;
     }
-    else {buttonContainer.innerText = button.value[localStorageLang].lowercase;}
     buttonContainer.className = button.css;
   }
   keyPad.insertAdjacentElement("beforeend", buttonContainer);
 });
 
-
 let allKeys = Array.from(document.querySelectorAll(".common_keyboard"));
 
-keyPad.addEventListener("click", function(e) {
+keyPad.addEventListener("click", clickKeyboard);
+
+function clickKeyboard(e) {
   e.target.classList.add("active");
-  allKeys = Array.from(document.querySelectorAll(".common_keyboard"));
-  switch (e.target.innerText) {
+  let keyValue = e.target.innerText;
+  clicksPushesHandler(keyValue);
+}
+
+function pushKeypad(e) {
+  const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
+  let keyValue = key.innerText;
+  clicksPushesHandler(keyValue);
+  key.classList.add("active");
+}
+//here attempt to write universal function to make input screen filled with pushes and clicks
+function clicksPushesHandler(value) {
+  switch (value) {
     case "Space":
       input.innerHTML += " ";
       break;
@@ -572,24 +583,22 @@ keyPad.addEventListener("click", function(e) {
         });
       }
       break;
+    case "Alt":
+      break;
+    case "Shift":
+      break;
+    case "Ctrl":
+      break;
     default:
-      input.innerHTML += e.target.innerText;
+      input.innerHTML += value;
   }
-});
-//fix below
+}
 function removeTransition(e) {
   if (e.propertyName !== "transform") return;
   e.target.classList.remove("active");
 }
-
-function pushKeypad(e) {
-  const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
-  input.innerHTML += key.innerText;
-  key.classList.add("active");
-}
-
 //HERE FOR LANG CHANGE
-function doc_keyUp(e) {
+function changeLang(e) {
   if (e.ctrlKey && e.altKey) {
     allKeys = Array.from(document.querySelectorAll(".common_keyboard"));
 
@@ -610,20 +619,22 @@ function doc_keyUp(e) {
     });
     if (keysLang === "eng") {
       keysLang = "rus";
-      localStorage.setItem('myLang', keysLang);
+      localStorage.setItem("myLang", keysLang);
     } else {
       keysLang = "eng";
-      localStorage.setItem('myLang', keysLang);
+      localStorage.setItem("myLang", keysLang);
     }
   }
 }
 
 const keys = Array.from(document.querySelectorAll(".common_keyboard"));
 keys.forEach(key => key.addEventListener("transitionend", removeTransition));
+
 window.addEventListener("keydown", pushKeypad);
-window.addEventListener("keydown", doc_keyUp);
-window.addEventListener('keydown', function (evt) {
-  if (evt.key == 'Shift' && !evt.repeat) { // ctrl
+window.addEventListener("keydown", changeLang);
+window.addEventListener("keydown", function(evt) {
+  if (evt.key == "Shift" && !evt.repeat) {
+    // ctrl
     if (keysCase == "uppercase") {
       buttonsArray.forEach(button => {
         allKeys.forEach(domButton => {
@@ -650,9 +661,10 @@ window.addEventListener('keydown', function (evt) {
       });
     }
   }
-})
-window.addEventListener('keyup', function(evt) {
-  if (evt.key == 'Shift') { // ctrl
+});
+window.addEventListener("keyup", function(evt) {
+  if (evt.key == "Shift") {
+    // ctrl
     if (keysCase == "uppercase") {
       buttonsArray.forEach(button => {
         allKeys.forEach(domButton => {
