@@ -326,6 +326,7 @@ let buttonsArray = [
     type: "service"
   },
   {
+    datacode: 'ShiftLeft',
     datakey: "16",
     value: "Shift",
     css: { common: "common_keyboard", special: "shift" },
@@ -418,6 +419,7 @@ let buttonsArray = [
     type: "service"
   },
   {
+    datacode: 'ShiftRight',
     datakey: "16",
     value: "Shift",
     css: { common: "common_keyboard", special: "shift" },
@@ -425,6 +427,7 @@ let buttonsArray = [
   },
 
   {
+    datacode: 'ControlLeft',
     datakey: "17",
     value: "Ctrl",
     css: { common: "common_keyboard", special: "ctrl" },
@@ -437,6 +440,7 @@ let buttonsArray = [
     type: "service"
   },
   {
+    datacode: 'AltLeft',
     datakey: "18",
     value: "Alt",
     css: { common: "common_keyboard" },
@@ -449,6 +453,7 @@ let buttonsArray = [
     type: "service"
   },
   {
+    datacode: 'AltRight',
     datakey: "18",
     value: "Alt",
     css: { common: "common_keyboard" },
@@ -473,6 +478,7 @@ let buttonsArray = [
     type: "service"
   },
   {
+    datacode: 'ControlRight',
     datakey: "17",
     value: "Ctrl",
     css: { common: "common_keyboard", special: "ctrl" },
@@ -505,6 +511,9 @@ if (!localStorageLang) {
 
 buttonsArray.forEach(button => {
   buttonContainer = document.createElement("div");
+  if (button.datacode) {
+    buttonContainer.setAttribute("data-code", button.datacode);
+  }
   buttonContainer.setAttribute("data-key", button.datakey);
   if (button.type == "service") {
     buttonContainer.innerText = button.value;
@@ -552,7 +561,11 @@ function clickShiftUp(e) {
   }
 }
 function pushKeypad(e) {
-  const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
+  let key;
+  if (e.keyCode == 16 || e.keyCode == 18 || e.keyCode == 17) {
+    key = document.querySelector(`div[data-code="${e.code}"]`)
+  }
+  else {key = document.querySelector(`div[data-key="${e.keyCode}"]`)}
   let keyValue = key.innerText;
   clicksPushesHandler(keyValue);
   key.classList.add("active");
